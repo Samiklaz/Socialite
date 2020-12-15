@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}
+Profile
+{% endblock %}
+
+{% block body %}
+<div class="container my-4">
+    <div class="row">
+        <div class="media">
+            <img src="{{ user_image.url }}" class="align-self-start mr-3 user_image" alt="" style="width:9rem;height:9rem;">
+            <div class="media-body info">
+                <h4 class="mt-0">{{ user_obj.username }}
+                    {% if connection and not request.user == user_obj %}
+                    <a href="{%url 'userpage:follow' user_obj.username %}" role="button" type="button" class="btn btn-outline-primary" id="follow" name="follow">
+                        Unfollow
+                    </a>
+                    {% elif not connection and not request.user == user_obj %}
+                    <a href="{%url 'userpage:follow' user_obj.username %}" role="button" type="button" class="btn btn-outline-primary" id="follow" name="follow">
+                        Follow
+                    </a>
+                    {% endif %}
+                </h4>
+                <p>Follower : {{ follower }}   Following : {{ following }}</p>
+                <p><b>{{ bio }}</b></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row my-4">
+        {% for post in posts %}
+        {% for user_post in post %}
+            <div class="col-md-4">
+                <img src="{{user_post.image.url}}" class="img img-responsive" alt="" style="width:350px; height:200px;">
+            </div>
+        {% endfor %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+     $("#follow").click(function(e){
+         e.preventDefault();
+         var href = this.href;
+
+         $.ajax({
+             url : href,
+             success : function(response){
+                if(response['following']){
+                   console.log(response)
+                   $("#follow").html("Unfollow")
+                }else{
+                   $("#follow").html("Follow")
+                }
+             }
+
+         })
+     })
+</script>
+{% endblock %}

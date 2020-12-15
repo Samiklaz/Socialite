@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="container">
+    <div class="">
+        <div class="" style="float:right;">
+            <!--button class="btn btn-success">Add Post <b>+</b></button-->
+            <form action="{% url 'userpage:post' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Image : </label>
+                    <input type="file" name="image" id="image">
+                </div>
+
+                <div class="form-group">
+                    <label>Captions :</label>
+                    <textarea name="captions" id="captions" placeholder=" write post"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-outline-success">Add Post</button>
+            </form>
+        </div>
+
+        {% for post in posts %}
+        <div class="card my-4 post_div" style="width:60%;" id="{{post.id}}">
+            <h5 class="card-header"><a href="{% url 'userpage:user_profile' post.user %}">{{post.user}}</a> <small style="float:right;">{{ post.date.date }}</small></h5>
+            <div class="card-body">
+                <p class="card-text">{{post.caption}}</p>
+                {% if post.image %}
+                <img src="{{post.image.url}}" class="img img-responsive" style="width:100%"/>
+                {% endif %}
+                <div class="my-4">
+
+                    <button class="btn btn-primary mr-4 like" id="{{post.id }}">
+                        {% if i in liked_post %}
+                        <a href="{% url 'userpage:like_dislike_post' %}" style="color:blue;" class="like_text" id="like_text">Liked</a>
+                        {% else %}
+                        <a href="{% url 'userpage:like_dislike_post' %}" style="color:white;" class="like_text" id="like_text">Like</a>
+                        {% endif %}
+                    </button>
+
+
+                    <a role="button" href="{% url 'userpage:comment' %}" class="btn btn-warning mx-4">Comment</a>
+                    <a href="" class="btn btn-info mx-4">Repost</a>
+                    {% if request.user == post.user %}
+                    <a href="{% url 'userpage:delete_post' post.id %}" class="btn btn-danger mx-4 delete" id="{{ post.id }}" style="float:right;">Delete</a>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    $(".delete").click(function(e){
+        var id = this.id;
+        var href = this.href;
+        console.log(href, id)
+        e.preventDefault();
+
+        $.ajax({
+            url: href,
+            data: {},
+        });
+
+        $("#"+id).fadeOut(1000);
+    });
+
+
+    $(".like").click(function(e){
+        var id = this.id;
+        var href = $('.like').find('a').attr('href');
+        console.log(href, id)
+        e.preventDefault();
+
+    $.ajax({
+        url:href,
+        data: {'likeId':id},
+
+        success: function(response){
+           if(response.liked){
+              $('.like_text').html("Liked");
+           }else{
+               $('.like_text').html("Like");
+           }
+        }
+    })
+
+
+    });
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+

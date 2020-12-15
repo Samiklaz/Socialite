@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="my-4 mx-4 container">
+    <form action="{% url 'userpage:comment' %}" method="get">
+        {% csrf_token %}
+        <div class="form-group row">
+            <label class="col-sm-2 col-label">Comment</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="comment">
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Write Comment</button>
+    </form>
+</div>
+
+<div class="container my-4 mx-4">
+    <div class="card">
+        <div class="card-header">
+        </div>
+
+        <div class="card-body">
+            <blockquote class="blockquote mb-0">
+                <p>Comments goes here</p>
+                <footer class="blockquote-footer">Someone famous</footer>
+            </blockquote>
+        </div>
+    </div>
+</div>
+{% endblock %}
